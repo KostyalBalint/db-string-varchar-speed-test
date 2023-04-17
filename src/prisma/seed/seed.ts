@@ -27,15 +27,22 @@ async function seedUsers(count: number) {
 }
 
 async function seedPosts(postsPerUser: number) {
-  const users = await prisma.user.findMany({});
-  for (const user of users) {
+  const userCount = await prisma.user.count({});
+
+  for (let i = 0; i < userCount / 10_000; i++) {
+    const users = await prisma.user.findMany({
+      skip: i * 10_000,
+      take: 10_000,
+    });
     const posts: Omit<Post, 'id'>[] = [];
-    for (let i = 0; i < postsPerUser; i++) {
-      posts.push({
-        authorId: user.id,
-        title: faker.lorem.sentence(),
-        content: faker.lorem.paragraph(),
-      });
+    for (const user of users) {
+      for (let i = 0; i < postsPerUser; i++) {
+        posts.push({
+          authorId: user.id,
+          title: faker.lorem.sentence(),
+          content: faker.lorem.paragraph().substring(0, 255),
+        });
+      }
     }
     await prisma.post.createMany({
       data: posts,
@@ -69,27 +76,14 @@ async function seedComments(commentPerPost: number) {
 async function main() {
   console.log('Start seeding ...');
 
-  let time = Date.now();
-  /*await seedUsers(100_000);
-  console.log(
-    '🔥 Users seeded, took: ',
-    (Date.now() - time / 1000).toFixed(4),
-    's',
-  );
-  time = Date.now();
+  await seedUsers(100_000);
+  console.log('🔥 Users seeded, took: ');
+
   await seedPosts(20);
-  console.log(
-    '🔥 Posts seeded, took: ',
-    (Date.now() - time / 1000).toFixed(4),
-    's',
-  );
-  time = Date.now();*/
+  console.log('🔥 Posts seeded, took: ');
+
   await seedComments(5);
-  console.log(
-    '🔥 Comments seeded: ',
-    (Date.now() - time / 1000).toFixed(4),
-    's',
-  );
+  console.log('🔥 Comments seeded: ');
 
   console.log('🔥 Seeding finished');
 }

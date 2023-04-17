@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "email" TEXT NOT NULL,
-    "name" TEXT,
+    "email" VARCHAR(255) NOT NULL,
+    "name" VARCHAR(255),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -10,8 +10,8 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
-    "title" TEXT NOT NULL,
-    "content" TEXT,
+    "title" VARCHAR(255) NOT NULL,
+    "content" VARCHAR(255),
     "authorId" INTEGER,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
@@ -20,14 +20,11 @@ CREATE TABLE "Post" (
 -- CreateTable
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
-    "content" TEXT,
+    "content" VARCHAR(255),
     "postId" INTEGER,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

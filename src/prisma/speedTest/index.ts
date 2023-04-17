@@ -26,10 +26,9 @@ async function main() {
   end("User's posts where title = 'A ab beatae.'");
 
   //WHERE name != 'ABC'
-  /*start();
-  await prisma.$executeRaw`select * from "Post" where "title" != 'A ab beatae.'`;
+  start();
+  await prisma.$executeRaw`select * from "Post" where "title" != 'A ab beatae.' LIMIT 50`;
   end("User's posts where title != 'A ab beatae.'");
-   */
 
   //WHERE name LIKE 'ABC%'
   start();
