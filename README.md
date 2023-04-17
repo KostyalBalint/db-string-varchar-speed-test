@@ -71,7 +71,7 @@ Post2 o{--|| User2 : "author"
 Comment2 o{--|| Post2 : "post"
 ```
 
-### 1 - Aggregate query
+### Queries ran
 
 User's posts total count query
 ```sql
