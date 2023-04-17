@@ -23,10 +23,12 @@
     "db:migrate:dev": "npx prisma migrate dev",
     "db:migrate:prod": "npx prisma migrate deploy",
     "db:seed": "ts-node src/prisma/seed/seed.ts",
+    "db:test": "ts-node src/prisma/speedTest/index.ts",
     "skaffold": "skaffold deploy --module=postgresql --port-forward"
   },
   "dependencies": {
     "@apollo/server": "^4.4.0",
+    "@faker-js/faker": "^7.6.0",
     "@nestjs/apollo": "^10.2.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
