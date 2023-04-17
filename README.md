@@ -12,26 +12,38 @@ npm run db:seed
 
 ## String schema - Varchar schema
 
+
+
 ```mermaid
 erDiagram
   User {
     Int id
     String email
-    String name  
+    
+    String name
+    
+      
   }
+  
 
 
   Post {
     Int id
     String title
-    String content  
+    
+    String content
+    
+      
   }
+  
 
 
   Comment {
     Int id
-    String content  
+    String content
+      
   }
+  
 
 Post o{--|| User : "author"
 Comment o{--|| Post : "post"
@@ -66,7 +78,9 @@ User's posts total count query
 select count(*) from "Post" inner join "User" on "Post"."authorId" = "User".id
 ```
 String Time: 2219 ms
+
 Varchar(n) Time: 1475 ms
+
 Percentage Gain: 150,4%
 
 
@@ -76,7 +90,9 @@ User's posts order by title asc LIMIT 50
 select * from "Post" order by "title" asc LIMIT 50
 ```
 String Time: 1148 ms
+
 Varchar(n) Time: 1092 ms
+
 Percentage Gain: 105,1%
 
 
@@ -86,7 +102,9 @@ User's posts where title = 'ABC'
 select * from "Post" where "title" = 'A ab beatae.'
 ```
 String Time: 676 ms
+
 Varchar(n) Time: 564 ms
+
 Percentage Gain: 119,9%
 
 
@@ -96,7 +114,9 @@ User's posts where title != 'ABC'
 select * from "Post" where "title" != 'A ab beatae.' LIMIT 50
 ```
 String Time: 11 ms
+
 Varchar(n) Time: 10 ms
+
 Percentage Gain: 110,0%
 
 
@@ -106,7 +126,9 @@ User's posts where title LIKE 'ABC%'
 select * from "Post" where "title" LIKE 'A ab beatae%'
 ```
 String Time: 730 ms
+
 Varchar(n) Time: 623 ms
+
 Percentage Gain: 117,2%
 
 
@@ -116,7 +138,9 @@ User's posts where title IN array
 select * from "Post" where "title" IN ('A ab beatae.', 'A ab beatae delectus.', 'Culpa debitis ut.', 'Molestias ipsum vero.')
 ```
 String Time: 921 ms
+
 Varchar(n) Time: 900 ms
+
 Percentage Gain: 102,3%
 
 
@@ -126,7 +150,9 @@ User's posts group by title having
 select "title", count(*) from "Post" group by "title" having count(*) > 2
 ```
 String Time: 9326 ms
+
 Varchar(n) Time: 9022 ms
+
 Percentage Gain: 103,4%
 
 ---
