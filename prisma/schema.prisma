@@ -12,25 +12,31 @@ datasource db {
 
 model User {
   id        Int      @default(autoincrement()) @id
-  email     String @db.VarChar(255)
-  name      String? @db.VarChar(255)
+  email     String
+  name      String?
   posts     Post[]
+
+  @@index([email, name])
 }
 
 model Post {
   id        Int      @default(autoincrement()) @id
-  title     String @db.VarChar(255)
-  content   String? @db.VarChar(255)
+  title     String
+  content   String?
 
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
 
   comments  Comment[]
+
+  @@index([title, content])
 }
 
 model Comment {
   id        Int      @default(autoincrement()) @id
-  content   String? @db.VarChar(255)
+  content   String?
   post      Post?    @relation(fields: [postId], references: [id])
   postId    Int?
+
+  @@index([content])
 }

@@ -76,10 +76,10 @@ async function seedComments(commentPerPost: number) {
 async function main() {
   console.log('Start seeding ...');
 
-  await seedUsers(100_000);
+  await seedUsers(200_000);
   console.log('🔥 Users seeded, took: ');
 
-  await seedPosts(20);
+  await seedPosts(10);
   console.log('🔥 Posts seeded, took: ');
 
   await seedComments(5);

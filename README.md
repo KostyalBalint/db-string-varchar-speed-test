@@ -17,22 +17,35 @@ npm run db:seed
 Grafikonok és teljes összehasonlítás a [MultiRun.xlsx](MultiRun.xlsx) fájlban találhatóak
 
 Varchar esetén átlagosan `~11%`-al lassabba az első futtatás
-
-String esetén átlagosan `~6%`-al lassabb az első futtatás 
-
-### IN (Subselect)
-
-### 5-6 mezőre vizsgálat, stb...
+String esetén átlagosan `~6%`-al lassabb az első futtatás
 
 ### Hogyan változik a teljesítmény, több / kevesebb rekorddal
 
 ### Indexelt string mezők
 
+Elhanyagolható sebesség különbség, a string és a varchar között
+
 ### Postgre tud-e? varchar() -> a rövid mezők varchar, a hosszúak string
+
+A rendszer automatikusan tömöríti a hosszú stringeket, 
+így a lemez fizikai igénye lehet kevesebb. Nagyon hosszú értékeket 
+háttér-táblákban is tárolnak, hogy ne zavarják az egyéb, 
+rövidebb oszlopértékekhez való gyors hozzáférést. 
+Mindenesetre a leghosszabb lehetséges karakterlánc, 
+amely tárolható, körülbelül 1 GB.
 
 ### Postgre specifikáció varchar max méret?
 
+Van 10_485_760 karakteres lehet maximum
 
+varchar(n) -> Ha `n` nincs megadva, bármilyen hosszú lehet (PostgreSQL) 
+
+### Postgre dokumentáció ajánlás
+
+There is no performance difference among these three types, apart from increased storage
+space when using the blank-padded type, and a few extra CPU cycles to check the length
+when storing into a length-constrained column. While character(n) has performance advantages in some other database systems, there is no such advantage in PostgreSQL; in fact
+character(n) is usually the slowest of the three because of its additional
 
 
 ```mermaid

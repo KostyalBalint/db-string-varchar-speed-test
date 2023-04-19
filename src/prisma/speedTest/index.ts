@@ -7,7 +7,7 @@ const prisma = new PrismaClient({
 let time = new Date();
 const start = () => (time = new Date());
 // @ts-ignore
-const end = (msg?: string) => new Date() - time;
+const end = () => new Date() - time;
 
 const loopTest = async (msg: string, callback: () => Promise<void>) => {
   const times = [];
@@ -20,6 +20,9 @@ const loopTest = async (msg: string, callback: () => Promise<void>) => {
 };
 
 async function main() {
+  //Get the name of the DB
+  console.log(await prisma.$queryRaw`select current_database()`);
+
   await loopTest("User's posts total count query", async () => {
     await prisma.$executeRaw`select count(*) from "Post" inner join "User" on "Post"."authorId" = "User".id`;
   });
@@ -48,10 +51,16 @@ async function main() {
     await prisma.$executeRaw`select * from "Post" where "title" LIKE 'A ab beatae%'`;
   });
 
-  //IN subselect
+  //IN array
   start();
   await loopTest("User's posts where title IN", async () => {
     await prisma.$executeRaw`select * from "Post" where "title" IN ('A ab beatae.', 'A ab beatae delectus.', 'Culpa debitis ut.', 'Molestias ipsum vero.')`;
+  });
+
+  //IN subselect
+  start();
+  await loopTest("User's posts where title IN subselect", async () => {
+    await prisma.$executeRaw`select * from "Post" where "authorId" IN (select id from "User" where "name" like 'May%')`;
   });
 
   //HAVING
@@ -62,6 +71,19 @@ async function main() {
       await prisma.$executeRaw`select "title", count(*) from "Post" group by "title" having count(*) > 2`;
     },
   );
+
+  //WHERE multiple field
+  start();
+  await loopTest('WHERE on multiple fields', async () => {
+    await prisma.$executeRaw`select * from "User" 
+                              inner join "Post" on "Post"."authorId" = "User".id 
+                              inner JOIN "Comment" ON "Post"."id" = "Comment"."postId"
+                              \tWHERE "Post"."content" LIKE '%voluptatum%'
+                              \tAND "User".email LIKE '%@gmail.com'
+                              \tAND "Comment"."content" LIKE '%maxime%'
+                              \tAND "User".id BETWEEN 100000 AND 150000
+                              \tOR "User"."name" = 'Una'`;
+  });
 }
 
 main();
@@ -69,7 +91,7 @@ main();
 //Cache
 //IN (Subselect)
 //5-6 mezőre vizsgálat, stb...
-//~15% hogyan változik a teljesítmény, több / kevesebb rekorddal
 //Indexelt string mezők
+//~15% hogyan változik a teljesítmény, több / kevesebb rekorddal
 //Postgre tud-e? varchar() -> a rövid mezők varchar, a hosszúak string
-//Postgre specifikáció varchar max méret?
+//Postgre specifikáció varchar max méret? (10_485_760)
