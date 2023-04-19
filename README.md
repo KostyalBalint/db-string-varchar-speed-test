@@ -12,6 +12,27 @@ npm run db:seed
 
 ## String schema - Varchar schema
 
+### Cache
+
+Grafikonok és teljes összehasonlítás a [MultiRun.xlsx](MultiRun.xlsx) fájlban találhatóak
+
+Varchar esetén átlagosan `~11%`-al lassabba az első futtatás
+
+String esetén átlagosan `~6%`-al lassabb az első futtatás 
+
+### IN (Subselect)
+
+### 5-6 mezőre vizsgálat, stb...
+
+### Hogyan változik a teljesítmény, több / kevesebb rekorddal
+
+### Indexelt string mezők
+
+### Postgre tud-e? varchar() -> a rövid mezők varchar, a hosszúak string
+
+### Postgre specifikáció varchar max méret?
+
+
 
 
 ```mermaid
@@ -19,10 +40,7 @@ erDiagram
   User {
     Int id
     String email
-    
-    String name
-    
-      
+    String name  
   }
   
 
@@ -30,18 +48,14 @@ erDiagram
   Post {
     Int id
     String title
-    
-    String content
-    
-      
+    String content      
   }
   
 
 
   Comment {
     Int id
-    String content
-      
+    String content      
   }
   
 

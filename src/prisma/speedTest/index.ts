@@ -6,44 +6,70 @@ const prisma = new PrismaClient({
 
 let time = new Date();
 const start = () => (time = new Date());
-const end = (msg: string) =>
-  // @ts-ignore
-  console.info(`${msg} [Time: %dms]`, new Date() - time);
+// @ts-ignore
+const end = (msg?: string) => new Date() - time;
+
+const loopTest = async (msg: string, callback: () => Promise<void>) => {
+  const times = [];
+  for (let i = 0; i < 5; i++) {
+    start();
+    await callback();
+    times.push(end());
+  }
+  console.log(`${msg};${times.join('; ')}`);
+};
 
 async function main() {
-  start();
-  await prisma.$executeRaw`select count(*) from "Post" inner join "User" on "Post"."authorId" = "User".id`;
-  end("User's posts total count query");
+  await loopTest("User's posts total count query", async () => {
+    await prisma.$executeRaw`select count(*) from "Post" inner join "User" on "Post"."authorId" = "User".id`;
+  });
 
   //ORDER BY name ASC/DESC
   start();
-  await prisma.$executeRaw`select * from "Post" order by "title" asc LIMIT 50`;
-  end("User's posts order by title asc LIMIT 50");
+  await loopTest("User's posts order by title asc LIMIT 50", async () => {
+    await prisma.$executeRaw`select * from "Post" order by "title" asc LIMIT 50`;
+  });
 
   //WHERE name = 'ABC
   start();
-  await prisma.$executeRaw`select * from "Post" where "title" = 'A ab beatae.'`;
-  end("User's posts where title = 'A ab beatae.'");
+  await loopTest("User's posts where title = 'A ab beatae.'", async () => {
+    await prisma.$executeRaw`select * from "Post" where "title" = 'A ab beatae.'`;
+  });
 
   //WHERE name != 'ABC'
   start();
-  await prisma.$executeRaw`select * from "Post" where "title" != 'A ab beatae.' LIMIT 50`;
-  end("User's posts where title != 'A ab beatae.'");
+  await loopTest("User's posts where title != 'A ab beatae.'", async () => {
+    await prisma.$executeRaw`select * from "Post" where "title" != 'A ab beatae.' LIMIT 50`;
+  });
 
   //WHERE name LIKE 'ABC%'
   start();
-  await prisma.$executeRaw`select * from "Post" where "title" LIKE 'A ab beatae%'`;
-  end("User's posts where title LIKE 'A ab beatae%'");
+  await loopTest("User's posts where title LIKE 'A ab beatae%'", async () => {
+    await prisma.$executeRaw`select * from "Post" where "title" LIKE 'A ab beatae%'`;
+  });
 
   //IN subselect
   start();
-  await prisma.$executeRaw`select * from "Post" where "title" IN ('A ab beatae.', 'A ab beatae delectus.', 'Culpa debitis ut.', 'Molestias ipsum vero.')`;
-  end("User's posts where title IN");
+  await loopTest("User's posts where title IN", async () => {
+    await prisma.$executeRaw`select * from "Post" where "title" IN ('A ab beatae.', 'A ab beatae delectus.', 'Culpa debitis ut.', 'Molestias ipsum vero.')`;
+  });
 
   //HAVING
   start();
-  await prisma.$executeRaw`select "title", count(*) from "Post" group by "title" having count(*) > 2`;
-  end("User's posts group by title having count(*) > 1");
+  await loopTest(
+    "User's posts group by title having count(*) > 1",
+    async () => {
+      await prisma.$executeRaw`select "title", count(*) from "Post" group by "title" having count(*) > 2`;
+    },
+  );
 }
 
 main();
+
+//Cache
+//IN (Subselect)
+//5-6 mezőre vizsgálat, stb...
+//~15% hogyan változik a teljesítmény, több / kevesebb rekorddal
+//Indexelt string mezők
+//Postgre tud-e? varchar() -> a rövid mezők varchar, a hosszúak string
+//Postgre specifikáció varchar max méret?
